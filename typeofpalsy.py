@@ -7,7 +7,7 @@ Created on Tue Jul  7 12:35:24 2020
 #Use landmarks to distinguish healthy/patient and then the type of palsy (peipheral or central)
 
 # USAGE
-# python typeofpalsy.py --path-location-peripheral-images /home/user/Desktop/images  --path-location-central-images /home/user/Desktop/textfile --path-location-healthy-images /home/user/Desktop/originaltextfile --manual-annotation 1
+# python typeofpalsy.py --path-location-peripheral-images /home/user/Desktop/perimages  --path-location-central-images /home/user/Desktop/cenimages --path-location-healthy-images /home/user/Desktop/healimages --manual-annotation 1
 
 # Each image folder should contain the images along with their corresponding face boxes and their landmarks.
 # The format of them should be 'im01.jpg' or 'im01.png', 'im01.npy' (file with landmarks) and 'im01_box.npy'
@@ -757,7 +757,7 @@ for path in pathnew: #Loop over the paths that contain images (peripheral, centr
             #Conditions that if hold true then an image is classified correctly as 'patient'
             #Only automatic annotation of healthy individuals is performed
             if int(manual_an)==1: #These are the threshods for manual annotation
-                if (eyeopening[i]>1000 or broweyedif[i]>2000 or eyeopening0[i]>2000 or eyeopening1[i]>2800 or eyeopening3[i]>4000 or moutheyes5[i]>3000 or eyeopening3b[i]<5500 or listlefte4[i]>450 or eyeopeninga[i]>1500 or listrighta[i]<-120 or listrighte3[i]<-30)  or totaleyebrowdif[i]>25    or listrighte[i]<170   :   
+                if (eyeopening[i]>1900 or broweyedif[i]>1800 or eyeopening1[i]>2400 or eyeopening1[i]>2400 or eyeopening3[i]>3000 or moutheyes5[i]>2300 or eyeopening3b[i]<6000 or listlefte4[i]>490 or eyeopeninga[i]>3000 or listrighta[i]<-100 or listrighte3[i]<40) or totaleyebrowdif[i]>32 or listrighte[i]<200   :  
                 #Above are the best thresholds found 
                     tp=tp+1
                 else: #If all the above conditions are false then the image is incorrectly classified as 'normal'
@@ -766,7 +766,7 @@ for path in pathnew: #Loop over the paths that contain images (peripheral, centr
                     # print(listofnames[i])
                     # print(eyeopening[i], broweyedif[i], eyeopening0[i], eyeopening1[i], eyeopening3[i], moutheyes5[i], eyeopening3b[i], listlefte4[i], eyeopeninga[i], listrighta[i], listrighte3[i])
             else: #These are the threshods for automatic annotation
-                if (moutheyes[i]>25 or eyestopnose[i]>120 or eyeschinlow[i]>40 or mouriglist[i]>700 or broweyedif[i]>2000 or eyeopeninga[i]>1200 or listline[i]>650 or listbroweye2[i]<35 or broweyedif1[i]<3200 or listlefte4[i]<200 or listrighta1[i]<150 or listlefta2[i]>130 ):
+                if (moutheyes[i]>30 or eyestopnose[i]>110 or eyeschinlow[i]>35 or mouriglist[i]>700 or broweyedif[i]>1800 or eyeopeninga[i]>3000 or listline[i]>650 or listbroweye2[i]<35 or broweyedif1[i]<3200 or listlefte4[i]<200 or listrighta1[i]<110 or listlefta2[i]>150 or eyeopening1[i]>2400 or eyeopening3[i]>2900 or moutheyes5[i]>2200 or eyeopening3b[i]<6300 or listline[i]<450 or listmouthbrow[i]>520 or listlefte[i]<200 or listbrowdif[i]>140 or eyesbottomrightmouth[i]>85 or eyesbottomrightmouth[i]<15  ):
                     tp=tp+1
                 else: #If all the above conditions are false then the image is incorrectly classified as 'normal'
                     fn=fn+1
@@ -793,7 +793,7 @@ for path in pathnew: #Loop over the paths that contain images (peripheral, centr
                          # print(listofnames[i])
                          # print(eyeopening[i], broweyedif[i], eyeopening0[i], eyeopening1[i],  broweyedif1[i], broweyedif1[i], moutheyes5[i], eyeopening3[i], moutheyes0[i], eyeopeninga[i], listrighta[i], moutheyes[i], eyesnose[i], topnosesidesofmouth[i], eyestopleftmouth[i], topnosesidesofmouth[i], eyeschinlow[i], eyesbottomrightmouth[i], eyeopening2[i], listline[i], listlefte4[i], listbroweye[i], newmet[i], newmet2[i], mouriglist[i], mouleflist[i], newmet[i], newmet2[i], mouriglist[i], mouleflist[i], newmet[i], newmet2[i], mouriglist[i], mouleflist[i], newmet[i], newmet2[i], mouleflist[i], mouriglist[i])
                 else: #For automatic annotation the metrics below are used. If auto annotation is good metrics will be the same.
-                    if (eyeopening[i]>1000 or eyeopening1[i]>3800 or eyeopening3[i]>5500 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>3900 or eyeopeninga[i]>1600 or listline[i]>650 or eyeopening3a[i]>15000 or listlefte2[i]<-80 or broweyedif[i]>2800 or broweyedif2[i]>14000 or broweyedif2[i]<1000 or listlefte4[i]>440 or listbroweye[i]>85 or listbroweye2[i]>130 or listlefta1[i]<110 or listrighta2[i]>-50 or listrighte3[i]>270 or eyeopeningb[i]>23):#or eyeopening1[i]>3500 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>3900 or eyeopeninga[i]>1600 or listline[i]>650 or eyeopening3a[i]>15000 or listlefte2[i]<-80 or broweyedif[i]>2800 or broweyedif2[i]>14000 or broweyedif2[i]<1000 or listlefte4[i]>440 or listbroweye[i]>85 or listbroweye2[i]>130 or listlefta1[i]<110 or listrighta2[i]>-50 or listrighte3[i]>270 or eyeopeningb[i]>23 or broweyedif1[i]<4000 or moutheyes5[i]>4000 or moutheyes0[i]>1300) or (listrighta[i]>200 or listline[i]>655 or listlefte4[i]<250 or listbroweye[i]>70) or eyeopening3a[i]>15000 or listlefta2[i]<-35 or listrighte1[i]>800 or listslrightleft[i]>350 or listrighta3[i]>450: 
+                    if (eyeopening[i]>1400 or eyeopening1[i]>4100 or eyeopening3[i]>5900 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>4200 or eyeopeninga[i]>2600 or listline[i]>650 or eyeopening3a[i]>15500 or listlefte2[i]<-115 or broweyedif[i]>3200 or broweyedif2[i]>15500 or listlefte4[i]>460 or listbroweye2[i]>120 or listlefta1[i]<100 or listrighte3[i]>270 or eyeopeningb[i]>23 or eyeopening0[i]>2600 or listslrightleft[i]>490 or listmouthbrow[i]>550 or moutheyes0[i]>1980 or listlefta2[i]<-47 ):#or eyeopening1[i]>3500 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>4200 or eyeopeninga[i]>2600 or listline[i]>650 or eyeopening3a[i]>15500 or listlefte2[i]<-115 or broweyedif[i]>3200 or broweyedif2[i]>15500 or listlefte4[i]>460 or listbroweye2[i]>120 or listlefta1[i]<100 or listrighte3[i]>270 or eyeopeningb[i]>23 or eyeopening0[i]>2600 or listslrightleft[i]>490 or listmouthbrow[i]>550 or moutheyes0[i]>1980 or listlefta2[i]<-47  or broweyedif1[i]<4000 or moutheyes5[i]>4000 or moutheyes0[i]>1300) or (listrighta[i]>200 or listline[i]>655 or listlefte4[i]<250 or listbroweye[i]>70) or eyeopening3a[i]>15000 or listlefta2[i]<-35 or listrighte1[i]>800 or listslrightleft[i]>350 or listrighta3[i]>450: 
                         tp1=tp1+1
                     else:
                         fn1=fn1+1
@@ -814,7 +814,7 @@ for path in pathnew: #Loop over the paths that contain images (peripheral, centr
                     else:
                         tn1=tn1+1
                 else: #For automatic annotation the metrics below are used. If auto annotation is good metrics will be the same.
-                    if (eyeopening[i]>1000 or eyeopening1[i]>3800 or eyeopening3[i]>5500 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>3900 or eyeopeninga[i]>1600 or listline[i]>650 or eyeopening3a[i]>15000 or listlefte2[i]<-80 or broweyedif[i]>2800 or broweyedif2[i]>14000 or broweyedif2[i]<1000 or listlefte4[i]>440 or listbroweye[i]>85 or listbroweye2[i]>130 or listlefta1[i]<110 or listrighta2[i]>-50 or listrighte3[i]>270 or eyeopeningb[i]>23):# or eyeopening1[i]>3500 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>3900 or eyeopeninga[i]>1600 or listline[i]>650 or eyeopening3a[i]>15000 or listlefte2[i]<-80 or broweyedif[i]>2800 or broweyedif2[i]>14000 or broweyedif2[i]<1000 or listlefte4[i]>440 or listbroweye[i]>85 or listbroweye2[i]>130 or listlefta1[i]<110 or listrighta2[i]>-50 or listrighte3[i]>270 or eyeopeningb[i]>23 or broweyedif1[i]<4000 or moutheyes5[i]>4000 or moutheyes0[i]>1300) or (listrighta[i]>200 or listline[i]>655 or listlefte4[i]<250 or listbroweye[i]>70) or eyeopening3a[i]>15000 or listlefta2[i]<-35 or listrighte1[i]>800 or listslrightleft[i]>350 or listrighta3[i]>450: 
+                    if (eyeopening[i]>1400 or eyeopening1[i]>4100 or eyeopening3[i]>5900 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>4200 or eyeopeninga[i]>2600 or listline[i]>650 or eyeopening3a[i]>15500 or listlefte2[i]<-115 or broweyedif[i]>3200 or broweyedif2[i]>15500 or listlefte4[i]>460 or listbroweye2[i]>120 or listlefta1[i]<100 or listrighte3[i]>270 or eyeopeningb[i]>23 or eyeopening0[i]>2600 or listslrightleft[i]>490 or listmouthbrow[i]>550 or moutheyes0[i]>1980 or listlefta2[i]<-47 ):# or eyeopening1[i]>3500 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>4200 or eyeopeninga[i]>2600 or listline[i]>650 or eyeopening3a[i]>15500 or listlefte2[i]<-115 or broweyedif[i]>3200 or broweyedif2[i]>15500 or listlefte4[i]>460 or listbroweye2[i]>120 or listlefta1[i]<100 or listrighte3[i]>270 or eyeopeningb[i]>23 or eyeopening0[i]>2600 or listslrightleft[i]>490 or listmouthbrow[i]>550 or moutheyes0[i]>1980 or listlefta2[i]<-47  or broweyedif1[i]<4000 or moutheyes5[i]>4000 or moutheyes0[i]>1300) or (listrighta[i]>200 or listline[i]>655 or listlefte4[i]<250 or listbroweye[i]>70) or eyeopening3a[i]>15000 or listlefta2[i]<-35 or listrighte1[i]>800 or listslrightleft[i]>350 or listrighta3[i]>450: 
                         fp1=fp1+1
                     else:
                         tn1=tn1+1
@@ -830,10 +830,16 @@ for path in pathnew: #Loop over the paths that contain images (peripheral, centr
         for i in range(len(eyeopening2)): #Loop over the number of images in that folder
            #Conditions that if hold true then an image is classified incorrectly as 'patient'
             #These are the exact same conditions as above!
-            if (eyeopening[i]>1000 or broweyedif[i]>2000 or eyeopening0[i]>2000 or eyeopening1[i]>2800 or eyeopening3[i]>4000 or moutheyes5[i]>3000 or eyeopening3b[i]<5500 or listlefte4[i]>450 or eyeopeninga[i]>1500 or listrighta[i]<-120 or listrighte3[i]<-30)  or totaleyebrowdif[i]>25   or listrighte[i]<170   :     
-                fp=fp+1
-            else: #If all the above conditions are false then the image is correctly classified as 'normal'
-                tn=tn+1
+            if int(manual_an)==1:
+                if (eyeopening[i]>1900 or broweyedif[i]>1800 or eyeopening1[i]>2400 or eyeopening1[i]>2400 or eyeopening3[i]>3000 or moutheyes5[i]>2300 or eyeopening3b[i]<6000 or listlefte4[i]>490 or eyeopeninga[i]>3000 or listrighta[i]<-100 or listrighte3[i]<40) or totaleyebrowdif[i]>32 or listrighte[i]<200   :  
+                    fp=fp+1
+                else: #If all the above conditions are false then the image is correctly classified as 'normal'
+                    tn=tn+1
+            else:
+                if (moutheyes[i]>30 or eyestopnose[i]>110 or eyeschinlow[i]>35 or mouriglist[i]>700 or broweyedif[i]>1800 or eyeopeninga[i]>3000 or listline[i]>650 or listbroweye2[i]<35 or broweyedif1[i]<3200 or listlefte4[i]<200 or listrighta1[i]<110 or listlefta2[i]>150 or eyeopening1[i]>2400 or eyeopening3[i]>2900 or moutheyes5[i]>2200 or eyeopening3b[i]<6300 or listline[i]<450 or listmouthbrow[i]>520 or listlefte[i]<200 or listbrowdif[i]>140 or eyesbottomrightmouth[i]>85 or eyesbottomrightmouth[i]<15  ):
+                    fp=fp+1
+                else: #If all the above conditions are false then the image is correctly classified as 'normal'
+                    tn=tn+1
                 
         #Append the results to lists
         fplis.append(fp)
@@ -1502,7 +1508,7 @@ for path in pathnew: #Loop over the paths that contain images (peripheral, centr
                             fnfin1=fnfin1+1
                             fnfinlis1.append(listofnames[i]) #Append the missclassified peripheral palsy as central to a list    
                     else:
-                        if (eyeopening[i]>1000 or eyeopening1[i]>3800 or eyeopening3[i]>5500 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>3900 or eyeopeninga[i]>1600 or listline[i]>650 or eyeopening3a[i]>15000 or listlefte2[i]<-80 or broweyedif[i]>2800 or broweyedif2[i]>14000 or broweyedif2[i]<1000 or listlefte4[i]>440 or listbroweye[i]>85 or listbroweye2[i]>130 or listlefta1[i]<110 or listrighta2[i]>-50 or listrighte3[i]>270 or eyeopeningb[i]>23):# or eyeopening1[i]>3500 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>3900 or eyeopeninga[i]>1600 or listline[i]>650 or eyeopening3a[i]>15000 or listlefte2[i]<-80 or broweyedif[i]>2800 or broweyedif2[i]>14000 or broweyedif2[i]<1000 or listlefte4[i]>440 or listbroweye[i]>85 or listbroweye2[i]>130 or listlefta1[i]<110 or listrighta2[i]>-50 or listrighte3[i]>270 or eyeopeningb[i]>23 or broweyedif1[i]<4000 or moutheyes5[i]>4000 or moutheyes0[i]>1300) or (listrighta[i]>200 or listline[i]>655 or listlefte4[i]<250 or listbroweye[i]>70) or eyeopening3a[i]>15000 or listlefta2[i]<-35 or listrighte1[i]>800 or listslrightleft[i]>350 or listrighta3[i]>450: 
+                        if (eyeopening[i]>1400 or eyeopening1[i]>4100 or eyeopening3[i]>5900 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>4200 or eyeopeninga[i]>2600 or listline[i]>650 or eyeopening3a[i]>15500 or listlefte2[i]<-115 or broweyedif[i]>3200 or broweyedif2[i]>15500 or listlefte4[i]>460 or listbroweye2[i]>120 or listlefta1[i]<100 or listrighte3[i]>270 or eyeopeningb[i]>23 or eyeopening0[i]>2600 or listslrightleft[i]>490 or listmouthbrow[i]>550 or moutheyes0[i]>1980 or listlefta2[i]<-47 ):# or eyeopening1[i]>3500 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>4200 or eyeopeninga[i]>2600 or listline[i]>650 or eyeopening3a[i]>15500 or listlefte2[i]<-115 or broweyedif[i]>3200 or broweyedif2[i]>15500 or listlefte4[i]>460 or listbroweye2[i]>120 or listlefta1[i]<100 or listrighte3[i]>270 or eyeopeningb[i]>23 or eyeopening0[i]>2600 or listslrightleft[i]>490 or listmouthbrow[i]>550 or moutheyes0[i]>1980 or listlefta2[i]<-47  or broweyedif1[i]<4000 or moutheyes5[i]>4000 or moutheyes0[i]>1300) or (listrighta[i]>200 or listline[i]>655 or listlefte4[i]<250 or listbroweye[i]>70) or eyeopening3a[i]>15000 or listlefta2[i]<-35 or listrighte1[i]>800 or listslrightleft[i]>350 or listrighta3[i]>450: 
                             tpfin1=tpfin1+1
                         else:
                             fnfin1=fnfin1+1
@@ -2156,7 +2162,7 @@ for path in pathnew: #Loop over the paths that contain images (peripheral, centr
                         else:
                               tnfin1=tnfin1+1
                     else: #Below are the metrics used when we have automatic annotation                  
-                        if (eyeopening[i]>1000 or eyeopening1[i]>3800 or eyeopening3[i]>5500 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>3900 or eyeopeninga[i]>1600 or listline[i]>650 or eyeopening3a[i]>15000 or listlefte2[i]<-80 or broweyedif[i]>2800 or broweyedif2[i]>14000 or broweyedif2[i]<1000 or listlefte4[i]>440 or listbroweye[i]>85 or listbroweye2[i]>130 or listlefta1[i]<110 or listrighta2[i]>-50 or listrighte3[i]>270 or eyeopeningb[i]>23):# or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>3900 or eyeopeninga[i]>1600 or listline[i]>650 or eyeopening3a[i]>15000 or listlefte2[i]<-80 or broweyedif[i]>2800 or broweyedif2[i]>14000 or broweyedif2[i]<1000 or listlefte4[i]>440 or listbroweye[i]>85 or listbroweye2[i]>130 or listlefta1[i]<110 or listrighta2[i]>-50 or listrighte3[i]>270 or eyeopeningb[i]>23 or broweyedif1[i]<4000 or moutheyes5[i]>4000 or moutheyes0[i]>1300) or (listrighta[i]>200 or listline[i]>655 or listlefte4[i]<250 or listbroweye[i]>70) or eyeopening3a[i]>15000 or listlefta2[i]<-35 or listrighte1[i]>800 or listslrightleft[i]>350 or listrighta3[i]>450:
+                        if (eyeopening[i]>1400 or eyeopening1[i]>4100 or eyeopening3[i]>5900 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>4200 or eyeopeninga[i]>2600 or listline[i]>650 or eyeopening3a[i]>15500 or listlefte2[i]<-115 or broweyedif[i]>3200 or broweyedif2[i]>15500 or listlefte4[i]>460 or listbroweye2[i]>120 or listlefta1[i]<100 or listrighte3[i]>270 or eyeopeningb[i]>23 or eyeopening0[i]>2600 or listslrightleft[i]>490 or listmouthbrow[i]>550 or moutheyes0[i]>1980 or listlefta2[i]<-47 ):# or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>4200 or eyeopeninga[i]>2600 or listline[i]>650 or eyeopening3a[i]>15500 or listlefte2[i]<-115 or broweyedif[i]>3200 or broweyedif2[i]>15500 or listlefte4[i]>460 or listbroweye2[i]>120 or listlefta1[i]<100 or listrighte3[i]>270 or eyeopeningb[i]>23 or eyeopening0[i]>2600 or listslrightleft[i]>490 or listmouthbrow[i]>550 or moutheyes0[i]>1980 or listlefta2[i]<-47  or broweyedif1[i]<4000 or moutheyes5[i]>4000 or moutheyes0[i]>1300) or (listrighta[i]>200 or listline[i]>655 or listlefte4[i]<250 or listbroweye[i]>70) or eyeopening3a[i]>15000 or listlefta2[i]<-35 or listrighte1[i]>800 or listslrightleft[i]>350 or listrighta3[i]>450:
                             fpfin1=fpfin1+1
                             fpfinlis1.append(listofnames[i]) #Append the name of misclassified image to a list 
                         else:
@@ -2166,13 +2172,13 @@ for path in pathnew: #Loop over the paths that contain images (peripheral, centr
             for i in range(len(eyeopening2)): #Loop over the total number of patient images
                 #If one of the below metrics is true then the image is correctly classified as patient
                 if int(manual_an)==1: #These are the metrics for manual annotation
-                    if (eyeopening[i]>1000 or broweyedif[i]>2000 or eyeopening0[i]>2000 or eyeopening1[i]>2800 or eyeopening3[i]>4000 or moutheyes5[i]>3000 or eyeopening3b[i]<5500 or listlefte4[i]>450 or eyeopeninga[i]>1500 or listrighta[i]<-120 or listrighte3[i]<-30) or totaleyebrowdif[i]>25    or listrighte[i]<170   : 
+                    if (eyeopening[i]>1900 or broweyedif[i]>1800 or eyeopening1[i]>2400 or eyeopening1[i]>2400 or eyeopening3[i]>3000 or moutheyes5[i]>2300 or eyeopening3b[i]<6000 or listlefte4[i]>490 or eyeopeninga[i]>3000 or listrighta[i]<-100 or listrighte3[i]<40) or totaleyebrowdif[i]>32 or listrighte[i]<200   :  
                         tpfin=tpfin+1
                     else: #If all the below metrics are false then the image is incorrectly classified as healthy
                         fnfin=fnfin+1
                         fnfinlis.append(listofnames[i]) #Append the name of the incorrectly classified image to a list
                 else: #These are the metrics for automatic annotation
-                    if (moutheyes[i]>25 or eyestopnose[i]>120 or eyeschinlow[i]>40 or mouriglist[i]>700 or broweyedif[i]>2000 or eyeopeninga[i]>1200 or listline[i]>650 or listbroweye2[i]<35 or broweyedif1[i]<3200 or listlefte4[i]<200 or listrighta1[i]<150 or listlefta2[i]>130 ): 
+                    if (moutheyes[i]>30 or eyestopnose[i]>110 or eyeschinlow[i]>35 or mouriglist[i]>700 or broweyedif[i]>1800 or eyeopeninga[i]>3000 or listline[i]>650 or listbroweye2[i]<35 or broweyedif1[i]<3200 or listlefte4[i]<200 or listrighta1[i]<110 or listlefta2[i]>150 or eyeopening1[i]>2400 or eyeopening3[i]>2900 or moutheyes5[i]>2200 or eyeopening3b[i]<6300 or listline[i]<450 or listmouthbrow[i]>520 or listlefte[i]<200 or listbrowdif[i]>140 or eyesbottomrightmouth[i]>85 or eyesbottomrightmouth[i]<15  ): 
                         tpfin=tpfin+1
                     else: #If all the below metrics are false then the image is incorrectly classified as healthy
                         fnfin=fnfin+1
@@ -2819,13 +2825,13 @@ for path in pathnew: #Loop over the paths that contain images (peripheral, centr
             for i in range(len(eyeopening2)): #Loop over files of healthy individuals
                 #If one of the following metrics is true then the image is incorretly classified as patient
                 if int(manual_an)==1:
-                    if (eyeopening[i]>1000 or broweyedif[i]>2000 or eyeopening0[i]>2000 or eyeopening1[i]>2800 or eyeopening3[i]>4000 or moutheyes5[i]>3000 or eyeopening3b[i]<5500 or listlefte4[i]>450 or eyeopeninga[i]>1500 or listrighta[i]<-120 or listrighte3[i]<-30) or totaleyebrowdif[i]>25 or listrighte[i]<170   : 
+                    if (eyeopening[i]>1900 or broweyedif[i]>1800 or eyeopening1[i]>2400 or eyeopening1[i]>2400 or eyeopening3[i]>3000 or moutheyes5[i]>2300 or eyeopening3b[i]<6000 or listlefte4[i]>490 or eyeopeninga[i]>3000 or listrighta[i]<-100 or listrighte3[i]<40) or totaleyebrowdif[i]>32 or listrighte[i]<200   :  
                         fpfin=fpfin+1 #Increase false positives by 1 if one of the above conditions holds true
                         fpfinlis.append(listofnames[i]) #Add the false positive name to a list
                     else: #If all of the above metrics are false then the image is corretly classified as healthy
                         tnfin=tnfin+1 
                 else:
-                    if (moutheyes[i]>25 or eyestopnose[i]>120 or eyeschinlow[i]>40 or mouriglist[i]>700 or broweyedif[i]>2000 or eyeopeninga[i]>1200 or listline[i]>650 or listbroweye2[i]<35 or broweyedif1[i]<3200 or listlefte4[i]<200 or listrighta1[i]<150 or listlefta2[i]>130 ):
+                    if (moutheyes[i]>30 or eyestopnose[i]>110 or eyeschinlow[i]>35 or mouriglist[i]>700 or broweyedif[i]>1800 or eyeopeninga[i]>3000 or listline[i]>650 or listbroweye2[i]<35 or broweyedif1[i]<3200 or listlefte4[i]<200 or listrighta1[i]<110 or listlefta2[i]>150 or eyeopening1[i]>2400 or eyeopening3[i]>2900 or moutheyes5[i]>2200 or eyeopening3b[i]<6300 or listline[i]<450 or listmouthbrow[i]>520 or listlefte[i]<200 or listbrowdif[i]>140 or eyesbottomrightmouth[i]>85 or eyesbottomrightmouth[i]<15  ):
                         fpfin=fpfin+1 #Increase false positives by 1 if one of the above conditions holds true
                         fpfinlis.append(listofnames[i]) #Add the false positive name to a list
                     else: #If all of the above metrics are false then the image is corretly classified as healthy

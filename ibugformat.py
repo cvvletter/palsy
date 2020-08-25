@@ -12,8 +12,10 @@ Created on Tue Jul  7 12:13:44 2020
 # The only formats of the images that are allowed are jpg and png. The landmark files should be 68*2 for landmarks
 # and the box should be an array with 4 elements. 
 # The folder should be inside the iBUG folder with the other datasets (eg. helen, afw etc.)
-# The originaltext file is the original text file with the iBUG's dataset training files (it is an 'xml' file)
-# The final txt file is aved in the image location with name 'traininglast.txt'
+# The 'textfile' is the file that contains the format for one image in the iBUG dataset (here 'train_format_original.txt')
+# The originaltext file is the original text file with the iBUG's dataset training files (it is an 'xml' file).
+# Here this is the 'labels_ibug_300W_train.xml'
+# The final txt file that emerge is saved in the image location with name 'traininglast.txt'
 
 # import the necessary packages
 import numpy as np

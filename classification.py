@@ -7,7 +7,7 @@ Created on Sun Jul 19 21:45:22 2020
 #Use landmarks to distinguish healthy/patient and then the type of palsy (peripheral or central)
 
 # USAGE
-# python classification.py --path-location-images /home/user/Desktop/images/  --path-location-predictor /home/user/Desktop/ --manual-annotation 0
+# python classification.py --path-location-images /home/user/Desktop/images/  --path-location-predictor /home/user/Desktop/ --manual-annotation 0 --central-or-peripheral 1
 
 # The path should contain the images (their corresponding face boxes and their landmarks will be estimated).
 # The format of them will be 'im01.jpg' or 'im01.png', 'im01.npy' (file with landmarks) and 'im01_box.npy'
@@ -15,6 +15,8 @@ Created on Sun Jul 19 21:45:22 2020
 # and the box should be an array with 4 elements. 
 # Images should have proper names meaning that they should not contain spaces or any strange symbols
 # Predictor should be named 'patients_landmarks.dat'
+# The last argument is optional. It is used only if we have manual annotation and if we have images of central or
+# peripheral palsy we should set its value to 1, otherwise to 0. 
 
 # import the necessary packages
 import time
@@ -35,6 +37,8 @@ ap.add_argument("-p", "--path-location-predictor", required=True,
 	help="path to file for facial landmark prediction (landmark predictor)")
 ap.add_argument("-o", "--manual-annotation", required=True,
  	help="Did we manually annotate the images (1) or not (0)")
+ap.add_argument("-i", "--central-or-peripheral", required=False,
+ 	help="Are we in a central or peripheral folder (1) or not (0)")
 args = vars(ap.parse_args())
 
 
@@ -66,6 +70,10 @@ def rotate(origin, point, angle):
     qy = oy + math.sin(angle) * (px - ox) + math.cos(angle) * (py - oy)
     return qx, qy
 
+#Count how many individuals are classified as having a central palsy, a peripheral palsy or being healthy
+countper=0
+countcen=0
+countheal=0
 
 manual_an=args["manual_annotation"] #Check if we have manual annotation (1) or not (0)
 if int(manual_an)==1: #Print message to inform
@@ -86,19 +94,25 @@ for filename in os.listdir(path): #Loop over the folder with images
     if os.path.isfile(os.path.join(path,filename)) and 'land' in filename:
         continue
     elif os.path.isdir(os.path.join(path,fname)): #If the name represents a directory then:
-        for filename2 in os.listdir(path+fname): #Loop over files in that directory
-            fname2=filename2 #Get filename
-            cmd="python palsyfinal.py --shape-predictor patients_landmarks.dat --image "+path+fname+"/"+fname2 #Run landmark detector
-            print("Processing Image "+ path+fname+"/"+fname2) #Print file locatio that landmarks are calculated for
-            pro = subprocess.Popen(cmd, stdout=subprocess.PIPE, 
-                                shell=True, preexec_fn=os.setsid) #Run the above command which normally needs terminal 
-            pro.wait() #Wait until execution finish
+        if int(manual_an)==1:
+            continue
+        else:
+            for filename2 in os.listdir(path+fname): #Loop over files in that directory
+                fname2=filename2 #Get filename
+                cmd="python palsyfinal.py --shape-predictor patients_landmarks.dat --image "+path+fname+"/"+fname2 #Run landmark detector
+                print("Processing Image "+ path+fname+"/"+fname2) #Print file locatio that landmarks are calculated for
+                pro = subprocess.Popen(cmd, stdout=subprocess.PIPE, 
+                                    shell=True, preexec_fn=os.setsid) #Run the above command which normally needs terminal 
+                pro.wait() #Wait until execution finish
     else: #If is not a directory (is image) then similar as above:
-        cmd="python palsyfinal.py --shape-predictor patients_landmarks.dat --image "+path+fname
-        print("Processing Image "+ path+fname)
-        pro = subprocess.Popen(cmd, stdout=subprocess.PIPE, 
-                            shell=True, preexec_fn=os.setsid) 
-        pro.wait()
+        if int(manual_an)==1:
+            continue
+        else:
+            cmd="python palsyfinal.py --shape-predictor patients_landmarks.dat --image "+path+fname
+            print("Processing Image "+ path+fname)
+            pro = subprocess.Popen(cmd, stdout=subprocess.PIPE, 
+                                shell=True, preexec_fn=os.setsid) 
+            pro.wait()
 
         
 os.chdir(path) #Go into that path
@@ -180,7 +194,14 @@ for filename in os.listdir(path): #Loop over files in that path
             listofnames.append(filename[:-8]+lastones) #Add the name of the image to a list
             lands=np.load(filename[:-8]+'.npy') #Load landmarks
 
-                    
+            if int(manual_an)==1:
+                if int(args["central_or_peripheral"])==1: #For peripheral or central images do the following:
+                    resiz=cv2.resize(image,(900,900)) #Resize image to the same size as when manually annotated
+                    fin=image.shape #Get the dimensions of the final image that we want
+                    init=resiz.shape #Get the dimensions of the initial image before any transformation
+                    lands[:,0]=lands[:,0]*fin[1]/init[1] #Transform the x coordinates of the landmarks
+                    lands[:,1]=lands[:,1]*fin[0]/init[0] #Transform the y coordinates of the landmarks
+                    lands=lands.astype(int) #Make the landmarks integers since transformation results in float numbers      
          #As a first step the face is cropped and the landmarks are adapted to fit in the size of that crop   
             for i in range(len(facebox)): #Loop over the facebox coordinates
                 if facebox[i]<0: #If a coordinate is outside of the image set it to 0
@@ -190,17 +211,17 @@ for filename in os.listdir(path): #Loop over files in that path
             #The following are just to confirm that the image is cropped properly (It will be)
             # cv2.imshow("Cropped Image", cropped_img)
             # cv2.waitKey(0)
-            cv2.imwrite(filename[:-8]+'crop'+lastones, cropped_img)
+            # cv2.imwrite(filename[:-8]+'crop'+lastones, cropped_img)
                     
             lands[:,0]=lands[:,0]-facebox[0] #Transform the x coordinates of the landmarks based on the cropped image
             lands[:,1]=lands[:,1]-facebox[1] #Transform the y coordinates of the landmarks based on the cropped image
 
             #The following are just to confirm that the landmarks are transformed properly
-            for (x,y) in lands:
-                cv2.circle(cropped_img, (x,y),1,(0,0,255),-1)
-            # cv2.imshow("Cropped Image", cropped_img)
-            # cv2.waitKey(0)
-            cv2.imwrite(filename[:-8]+'cropland'+lastones, cropped_img)
+            # for (x,y) in lands:
+            #     cv2.circle(cropped_img, (x,y),1,(0,0,255),-1)
+            # # cv2.imshow("Cropped Image", cropped_img)
+            # # cv2.waitKey(0)
+            # cv2.imwrite(filename[:-8]+'cropland'+lastones, cropped_img)
             
          #As a second step the cropped face is resized to 900*900 and the landmarks are again transformed to fit in that size  
             init=cropped_img.shape #Get the dimensions of the cropped image
@@ -726,31 +747,38 @@ for filename in os.listdir(path): #Loop over files in that path
                 broweyedif2.append(eyeopening1[i]+eyeopening3[i]+eyeopening0[i]+moutheyes5[i]) #Add that difference to a list
                 
             if int(manual_an)==1: #These are the threshods for manual annotation
-                       if (eyeopening[i]>1000 or broweyedif[i]>2000 or eyeopening0[i]>2000 or eyeopening1[i]>2800 or eyeopening3[i]>4000 or moutheyes5[i]>3000 or eyeopening3b[i]<5500 or listlefte4[i]>450 or eyeopeninga[i]>1500 or listrighta[i]<-120 or listrighte3[i]<-30)  or totaleyebrowdif[i]>25    or listrighte[i]<170   :   
+                       if (eyeopening[i]>1900 or broweyedif[i]>1800 or eyeopening0[i]>1700 or eyeopening1[i]>2400 or eyeopening3[i]>3000 or moutheyes5[i]>2300 or eyeopening3b[i]<6000 or listlefte4[i]>490 or eyeopeninga[i]>3000 or listrighta[i]<-100 or listrighte3[i]<40) or totaleyebrowdif[i]>32 or listrighte[i]<200   :   
                        #Above are the best thresholds found 
                            print("Image {} is classified as patient (manual annotation)".format(listofnames[i]))
                            if (eyeopening[i]>2700 or broweyedif[i]>4500 or eyeopening0[i]>4000 or eyeopening1[i]>8000 or broweyedif1[i]>6500 or broweyedif1[i]<3300 or eyeopening3[i]<380 or moutheyes0[i]>2000  or eyeopeninga[i]>5500 ) or (moutheyes[i]>=120 or eyesnose[i]>=60 or eyestopleftmouth[i]>=80 or topnosesidesofmouth[i]>=110 or eyesbottomrightmouth[i]>100) or eyeopening2[i]>630 or listline[i]>700 or listlefte4[i]>570 or listbroweye[i]>85 or eyeopening3a[i]>15500 or  listrighta2[i]>-10 or listrighte2[i]>500 or listrighte3[i]>250  or broweyedif2[i]<2000 or listrighta4[i]<-1600 or listbrowdif[i]>140 or lenratio[i]<20 :
                                 print("Patient is classified as having a peripheral palsy")
                                 print("\n")
+                                countper+=1
                            else:
                                 print("Patient is classified as having a central palsy")
                                 print("\n")
+                                countcen+=1
                        else: 
                            print("Image {} is classified as healthy (manual annotation)".format(listofnames[i]))
                            print("\n")
-            else: #These are the threshods for automatic annotation
-                       if (moutheyes[i]>25 or eyestopnose[i]>120 or eyeschinlow[i]>40 or mouriglist[i]>700 or broweyedif[i]>2000 or eyeopeninga[i]>1200 or listline[i]>650 or listbroweye2[i]<35 or broweyedif1[i]<3200 or listlefte4[i]<200 or listrighta1[i]<150 or listlefta2[i]>130 ):
+                           countheal+=1
+            elif int(manual_an)==0: #These are the threshods for automatic annotation
+                       if (moutheyes[i]>30 or eyestopnose[i]>110 or eyeschinlow[i]>35 or mouriglist[i]>700 or broweyedif[i]>1800 or eyeopeninga[i]>3000 or listline[i]>650 or listbroweye2[i]<35 or broweyedif1[i]<3200 or listlefte4[i]<200 or listrighta1[i]<110 or listlefta2[i]>150 or eyeopening1[i]>2400 or eyeopening3[i]>2900 or moutheyes5[i]>2200 or eyeopening3b[i]<6300 or listline[i]<450 or listmouthbrow[i]>520 or listlefte[i]<200 or listbrowdif[i]>140 or eyesbottomrightmouth[i]>85 or eyesbottomrightmouth[i]<15  ):
                            print("Image {} is classified as patient (automatic annotation)".format(listofnames[i]))
-                           if (eyeopening[i]>1000 or eyeopening1[i]>3800 or eyeopening3[i]>5500 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>3900 or eyeopeninga[i]>1600 or listline[i]>650 or eyeopening3a[i]>15000 or listlefte2[i]<-80 or broweyedif[i]>2800 or broweyedif2[i]>14000 or broweyedif2[i]<1000 or listlefte4[i]>440 or listbroweye[i]>85 or listbroweye2[i]>130 or listlefta1[i]<110 or listrighta2[i]>-50 or listrighte3[i]>270 or eyeopeningb[i]>23):
+                           if (eyeopening[i]>1400 or eyeopening1[i]>4100 or eyeopening3[i]>5900 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>4200 or eyeopeninga[i]>2600 or listline[i]>650 or eyeopening3a[i]>15500 or listlefte2[i]<-115 or broweyedif[i]>3200 or broweyedif2[i]>15500 or listlefte4[i]>460 or listbroweye2[i]>120 or listlefta1[i]<100 or listrighte3[i]>270 or eyeopeningb[i]>23 or eyeopening0[i]>2600 or listslrightleft[i]>490 or listmouthbrow[i]>550 or moutheyes0[i]>1980 or listlefta2[i]<-47 ):
+                           #if (eyeopening[i]>1000 or eyeopening1[i]>3800 or eyeopening3[i]>5500 or broweyedif1[i]>6600 or broweyedif1[i]<3300 or moutheyes5[i]>3900 or eyeopeninga[i]>1600 or listline[i]>650 or eyeopening3a[i]>15000 or listlefte2[i]<-80 or broweyedif[i]>2800 or broweyedif2[i]>14000 or broweyedif2[i]<1000 or listlefte4[i]>440 or listbroweye[i]>85 or listbroweye2[i]>130 or listlefta1[i]<110 or listrighta2[i]>-50 or listrighte3[i]>270 or eyeopeningb[i]>23):
                                 print("Patient is classified as having a peripheral palsy")
                                 print("\n")
+                                countper+=1
                            else:
                                 print("Patient is classified as having a central palsy")
                                 print("\n")
+                                countcen+=1
                        else:
                            print("Image {} is classified as healthy (automatic annotation)".format(listofnames[i]))
                            print("\n")
-
+                           countheal+=1
 
 end=time.time()
-print("Total running time was {}".format(end-start))
+print("Total running time was {} seconds".format(end-start))
+print("From a total of {} images, {} are classified as healthy, {} as having a central and {} as having a peripheral palsy".format(countper+countcen+countheal, countheal,countcen,countper))
