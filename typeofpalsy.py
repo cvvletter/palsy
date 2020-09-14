@@ -23,6 +23,7 @@ import cv2
 import math
 import argparse
 import matplotlib.pyplot as plt
+import pickle
 
 start = time.time() #To count running time
 
@@ -132,38 +133,24 @@ pointstoplot=[]
 #             'listrighte3[i]<-47.44230769230771', 'listlefte4[i]<187.07738095238096', 'listbroweye2[i]<35.0', 'newmet[i]<-19.5',
 #             'newmet2[i]<-30.0']
 
-#List of manually changed metrics + extra resulted from the procedure above
-# metrnames=['eyeopening[i]>1900', 'broweyedif[i]>1800', 'eyeopening0[i]>1700', 'eyeopening1[i]>2400', 'eyeopening3[i]>3000',
-#  'moutheyes5[i]>2300', 'eyeopening3b[i]<6000', 'listlefte4[i]>490', 'eyeopeninga[i]>3000', 'listrighta[i]<-100',
-#  'listrighte3[i]<40', 'listrighte[i]<200', 'totaleyebrowdif[i]>32', 'broweyedif2[i]>10000', 'eyeopening3a[i]<3500',
-#  'listlefta[i]<40', 'listrighta1[i]<110', 'listlefta2[i]>150', 'listlefta2[i]<-80', 'listrighte1[i]<200',
-#  'listlefte2[i]<-130', 'listlefte2[i]>370', 'listrighte2[i]<-500', 'listrighte2[i]>400', 'listrighta3[i]>600',
-#  'listrighta3[i]<200', 'listlefta4[i]>100', 'listlefta4[i]<-200', 'listrighta4[i]>-100', 'listrighte4[i]>800',
-#  'listrighte4[i]<200', 'eyeopeningb[i]>30', 'moutheyes[i]>30', 'eyesnose[i]>50', 'eyestopnose[i]>120',
-#  'eyestopleftmouth[i]>60', 'eyesbottomrightmouth[i]>90', 'eyeschinlow[i]>50', 'eyeopening2[i]>500',
-#  'newmet[i]>20', 'newmet[i]<-20', 'newmet2[i]>30', 'newmet2[i]<-20', 'mouriglist[i]>700', 'mouleflist[i]>700',
-#  'listline[i]>651.0','listlefte1[i]>520.7285997031173','listlefte1[i]<232.25','listeyedif[i]>81.5',
-#  'listmouthbrow[i]>530.5','lenratio[i]>385.8013805135207','topnosesidesofmouth[i]<0.6813332167468502',
-#  'listlefta1[i]<81.29224861180141','listlefte[i]<193.54802267652977','listlefta3[i]<107.46923076923076',
-#  'listlefte4[i]<187.07738095238096', 'listbroweye2[i]<35.0']
 
 #List of manually selected metrics for distinguishing healthy from patients
 metrnames=['eyeopening[i]>1900','broweyedif[i]>1800', 'eyeopening0[i]>1700','eyeopening1[i]>2400','eyeopening3[i]>3000',
-           'moutheyes5[i]>2300', 'eyeopening3b[i]<6000','listlefte4[i]>490', 'eyeopeninga[i]>3000', 'listrighta[i]<-100',
-           'listrighte3[i]<40','listrighte[i]<200','totaleyebrowdif[i]>32', 'broweyedif2[i]>10000','eyeopening3a[i]<3500',
-           'listlefta[i]<40','listrighta1[i]<110','listlefta2[i]>150','listlefta2[i]<-80','listrighte1[i]<200',
-           'listlefte2[i]<-130','listlefte2[i]>370','listrighte2[i]<-500','listrighte2[i]>400','listrighta3[i]>600',
-           'listrighta3[i]<200','listlefta4[i]>100','listlefta4[i]<-200','listrighta4[i]>-100','listrighte4[i]>800',
-           'listrighte4[i]<200','eyeopeningb[i]>30','moutheyes[i]>30','eyesnose[i]>50','eyestopnose[i]>120',
-           'eyestopleftmouth[i]>60','eyesbottomrightmouth[i]>90','eyeschinlow[i]>50','eyeopening2[i]>500','newmet[i]>20',
-           'newmet[i]<-20','newmet2[i]>30','newmet2[i]<-20','mouriglist[i]>700','mouleflist[i]>700','lenratio[i]>300']
+            'moutheyes5[i]>2300', 'eyeopening3b[i]<6000','listlefte4[i]>490', 'eyeopeninga[i]>3000', 'listrighta[i]<-100',
+            'listrighte3[i]<40','listrighte[i]<200','totaleyebrowdif[i]>32', 'broweyedif2[i]>10000','eyeopening3a[i]<3500',
+            'listlefta[i]<40','listrighta1[i]<110','listlefta2[i]>150','listlefta2[i]<-80','listrighte1[i]<200',
+            'listlefte2[i]<-130','listlefte2[i]>370','listrighte2[i]<-500','listrighte2[i]>400','listrighta3[i]>600',
+            'listrighta3[i]<200','listlefta4[i]>100','listlefta4[i]<-200','listrighta4[i]>-100','listrighte4[i]>800',
+            'listrighte4[i]<200','eyeopeningb[i]>30','moutheyes[i]>30','eyesnose[i]>50','eyestopnose[i]>120',
+            'eyestopleftmouth[i]>60','eyesbottomrightmouth[i]>90','eyeschinlow[i]>50','eyeopening2[i]>500','newmet[i]>20',
+            'newmet[i]<-20','newmet2[i]>30','newmet2[i]<-20','mouriglist[i]>700','mouleflist[i]>700','lenratio[i]>300']
 
 
 #List of manually selected metrics for distinguishing peripheral from central palsy
 pointstoplotpat=[]
 
 #Original metrics resulted from the procedure of Algorithm 2
-# alg2=['eyeopening[i]>10000.0', 'broweyedif[i]>46550.0', 'moutheyes[i]>535.1370160790185', 
+# metrnamespat=['eyeopening[i]>10000.0', 'broweyedif[i]>46550.0', 'moutheyes[i]>535.1370160790185', 
 #               'eyesnose[i]>316.70134188202655', 'eyestopnose[i]>193.17473897763853', 'eyestopleftmouth[i]>411.8902222520694',
 #               'eyesbottomrightmouth[i]>132.20043591087926', 'topnosesidesofmouth[i]>204.1792087015364', 'eyeopening0[i]>51700.0', 
 #               'eyeopening1[i]>30600.0', 'eyeopening3[i]>41400.0', 'broweyedif1[i]>29300.0', 'moutheyes0[i]>11783.333333333336',
@@ -192,29 +179,6 @@ pointstoplotpat=[]
 #               'totaleyebrowdif[i]<0.5', 'lenratio[i]<13.30967169476486', 'newmet[i]<-100.0', 'newmet2[i]<-50.0', 
 #               'mouleflist[i]<529.0', 'eyeopening2[i]<106.7672627389279', 'broweyedif2[i]<1900.0']
 
-#List of manually changed metrics + extra resulted from the procedure
-# metrnamespat=['eyeopening[i]>2700', 'broweyedif[i]>4500', 'eyeopening0[i]>5000',
-#  'eyeopening1[i]>8000', 'broweyedif1[i]>6500', 'broweyedif1[i]<3300', 'eyeopening3[i]<380', 'moutheyes0[i]>2000',
-#  'eyeopeninga[i]>5500', 'moutheyes[i]>120', 'eyesnose[i]>60', 'eyestopleftmouth[i]>80', 'topnosesidesofmouth[i]>110',
-#  'eyesbottomrightmouth[i]>105', 'eyeopening2[i]>630', 'listline[i]>700', 'listlefte4[i]>570', 'listbroweye[i]>90',
-#  'eyeopening3a[i]>15500', 'listrighta2[i]>-10', 'listrighte2[i]>500', 'listrighte3[i]>250', 'broweyedif2[i]<2000',
-#  'listrighta4[i]<-1600', 'listbrowdif[i]>140', 'lenratio[i]<20', 'eyeopening3[i]>9000', 'moutheyes5[i]>9500',
-#  'listrighta[i]<-150', 'newmet[i]>25', 'newmet[i]<-25', 'newmet2[i]>50', 'lenratio[i]>550', 'broweyedif2[i]>22000',
-#  'eyeopeningb[i]>52', 'eyeopening3b[i]>17000', 'eyeopening3b[i]<400', 'listslrightleft[i]>550', 'listmouthbrow[i]>580',
-#  'totaleyebrowdif[i]>50', 'listbroweye2[i]>150', 'listrighta1[i]<90', 'listlefte2[i]<-160', 'listrighte2[i]<-700',
-#  'listrighta3[i]>730', 'listrighta3[i]<200', 'listlefta4[i]<-300', 'listlefte3[i]>330', 'listlefte3[i]<60',
-#  'listrighte3[i]<-200', 'listrighte4[i]<200', 'listlefta1[i]>350', 'listlefte1[i]<220', 'listeyedif[i]>90',
-#  'listbrowdif[i]<50', 'eyeopeningb[i]>50', 'eyestopnose[i]>135', 'eyeopening2[i]<100',
-#  'listlefta[i]>1635.3801266908288', 'listrighta[i]>285.0308018965768','listrighta1[i]>3311.6966050238702',
-#  'listlefte[i]>2460.948529640835', 'listrighte[i]>1182.5848392795338','listlefte1[i]>3295.2878771752435', 
-#  'listrighte1[i]>1636.745965295474','listlefta3[i]>7976.451546391752','listlefta4[i]>150.0192105263158',
-#  'listrighta4[i]>23.01971326164876','listrighte4[i]>3631.054585152838', 
-#  'listeyedif[i]>292.5','mouriglist[i]>3018.0', 'mouleflist[i]>3358.5','moutheyes[i]<5.8169177392968265', 
-#  'eyesnose[i]<0.10509390075095837', 'eyestopnose[i]<1.2749423602673176', 'eyestopleftmouth[i]<1.6357842993486713',
-#  'eyesbottomrightmouth[i]<2.521159702633838', 'topnosesidesofmouth[i]<0.21314073842455628', 'eyeopening1[i]<300.0',
-#  'eyeschinlow[i]<1.1546685743706462','moutheyes5[i]<50.0','listb[i]<1.0547645262970609','listlefta2[i]<-930.8717274281486', 
-#  'listrighta2[i]<-5794.49135923804', 'listlefte[i]<173.14353547592646','listlefta3[i]<88.69090909090909',
-#  'listslrightleft[i]<10.621665087118146', 'totaleyebrowdif[i]<0.5','newmet2[i]<-50.0', 'mouleflist[i]<529.0']
 
 #List of manually selected metrics for distinguishing central from peripheral palsy
 metrnamespat=['eyeopening[i]>2700','broweyedif[i]>4500','eyeopening0[i]>5000','eyeopening1[i]>8000','eyeopening3[i]>9000',
@@ -234,6 +198,21 @@ metrnamespat=['eyeopening[i]>2700','broweyedif[i]>4500','eyeopening0[i]>5000','e
 #Below are for automatic annotation - Only the manually selected are presented
 
 #Distinguish healthy from patients
+
+#Original metrics resulted from the procedure of Algorithm 2
+# metrnames2=['broweyedif[i]>2200.0', 'moutheyes[i]>42.820076666441906', 'eyesnose[i]>37.353156915479275', 
+#             'eyestopnose[i]>105.76367735087408', 'eyesbottomrightmouth[i]>85.13828256452192', 'eyeopening0[i]>1850.0', 
+#             'eyeopening1[i]>2950.0', 'eyeopening3[i]>4050.0', 'eyeschinlow[i]>66.32981546742951', 'moutheyes5[i]>2900.0', 
+#             'listrighta[i]>250.69556314623338', 'listlefta2[i]>149.05714060092288', 'listlefta4[i]>107.70340223157125', 
+#             'listrighte4[i]>798.9640591966173', 'listbrowdif[i]>145.0', 'listmouthbrow[i]>523.0', 'newmet2[i]>13.5',
+#             'mouriglist[i]>713.5', 'mouleflist[i]>714.0', 'broweyedif2[i]>10950.0', 'eyesbottomrightmouth[i]<17.74705001611946',
+#             'topnosesidesofmouth[i]<0.7025686231311852', 'broweyedif1[i]<3400.0', 'eyeopening3a[i]<2250.0', 
+#             'eyeopening3b[i]<4100.0', 'listrighta[i]<-96.681248260509', 'listlefte[i]<200.48773551353037', 'listline[i]<453.5',
+#             'listlefte1[i]<234.5', 'listrighte2[i]<-470.4230769230769', 'listrighta3[i]<228.9000786782061', 
+#             'listrighte3[i]<85.28333333333333', 'listrighte4[i]<205.47222222222223', 'listbroweye2[i]<30.0', 'newmet2[i]<-18.0', 
+#             'eyeopening2[i]<58.90489875119208']
+
+#List of manually selected metrics for distinguishing central from peripheral palsy
 metrnames2=['moutheyes[i]>30','eyestopnose[i]>110','eyeschinlow[i]>35','mouriglist[i]>700','broweyedif[i]>1800',
             'eyeopeninga[i]>3000','listline[i]>650','listbroweye2[i]<35','broweyedif1[i]<3200','listlefte4[i]>470',
             'listlefte4[i]<200','listrighta1[i]>460','listrighta1[i]<110','listlefta2[i]>150','eyeopening1[i]>2400',
@@ -244,15 +223,44 @@ metrnames2=['moutheyes[i]>30','eyestopnose[i]>110','eyeschinlow[i]>35','mourigli
             'listrighte2[i]<-480','listlefta3[i]<100','listlefta4[i]>110','listrighta4[i]<-1700','listrighte4[i]>800',
             'eyesnose[i]>42','eyestopleftmouth[i]>55','eyeopening2[i]>450','newmet2[i]>20','newmet2[i]<-20','mouleflist[i]>700']
 
+
+
+
 #Distinguishing peripheral from central palsy
+
+#Original metrics resulted from the procedure of Algorithm 2
+# metrnamespat2=['eyeopening[i]>1650.0', 'broweyedif[i]>3700.0', 'moutheyes[i]>85.78947885707015', 'eyesnose[i]>53.78158061011564',
+#                 'eyestopleftmouth[i]>66.1098228604898', 'eyesbottomrightmouth[i]>112.35802051039232', 'eyeopening0[i]>3050.0', 
+#                 'eyeopening1[i]>4950.0', 'eyeopening3[i]>6350.0', 'eyeschinlow[i]>122.12140038576791', 'broweyedif1[i]>6725.0',
+#                 'moutheyes0[i]>2000.0', 'moutheyes5[i]>5050.0', 'eyeopening3a[i]>16450.0', 'eyeopening3b[i]>19500.0', 
+#                 'eyeopeninga[i]>3200.0', 'listrighta2[i]>36.191363638677124', 'eyeopeningb[i]>24.5', 
+#                 'listlefte[i]>402.6805816543715', 'listline[i]>666.0', 'listrighte1[i]>895.2435897435896', 
+#                 'listlefte2[i]>269.0600920069005', 'listrighte2[i]>230.60227272727275', 'listrighta4[i]>-219.9506048387097', 
+#                 'listrighte3[i]>283.2239698715108', 'listlefte4[i]>489.0204603580562', 'listeyedif[i]>73.5', 'listbroweye[i]>81.0',
+#                 'listslrightleft[i]>508.0398936170212', 'listmouthbrow[i]>562.0', 'totaleyebrowdif[i]>34.5', 
+#                 'listbroweye2[i]>123.0', 'lenratio[i]>170.68535242462525', 'newmet[i]>13.0', 'newmet2[i]>22.5',
+#                 'eyeopening2[i]>453.30586066524063', 'broweyedif2[i]>16950.0', 'moutheyes[i]<0.4582981062660849', 
+#                 'eyestopnose[i]<1.1356680741187688', 'eyesbottomrightmouth[i]<8.347337322648883', 
+#                 'topnosesidesofmouth[i]<0.1389302148114382', 'eyeopening0[i]<50.0', 'eyeopening3[i]<50.0',
+#                 'eyeschinlow[i]<0.19245325234197708', 'broweyedif1[i]<3215.0', 'moutheyes5[i]<50.0', 'eyeopening3a[i]<250.0',
+#                 'listlefta[i]<37.770142130361165', 'listb[i]<1.121212611827111', 'listlefta1[i]<74.3571589042638', 
+#                 'listrighta1[i]<113.5677725381409', 'listlefta2[i]<-47.21244367222749', 'listlefte[i]<165.69623774439862',
+#                 'listline[i]<436.0', 'listlefte1[i]<205.3867924528302', 'listlefte2[i]<-127.07322654462243', 
+#                 'listlefta3[i]<106.15485362095531', 'listrighta3[i]<190.57878411910667', 'listlefta4[i]<-141.83880597014928',
+#                 'listlefte3[i]<68.40164728682171', 'listrighte3[i]<53.11666666666668', 'listlefte4[i]<189.3858165256994',
+#                 'listrighte4[i]<193.02777777777777', 'listbroweye[i]<0.5', 'newmet[i]<-16.5', 'newmet2[i]<-30.5', 
+#                 'eyeopening2[i]<41.421808324567095', 'broweyedif2[i]<750.0']
+
+
+#List of manually selected metrics for distinguishing central from peripheral palsy
 metrnamespat2=['eyeopening[i]>1400','eyeopening1[i]>4100','eyeopening3[i]>5900','broweyedif1[i]>6600','broweyedif1[i]<3300',
-               'moutheyes5[i]>4200','eyeopeninga[i]>2600','listline[i]>650','eyeopening3a[i]>15500','listlefte2[i]<-115',
-               'broweyedif[i]>3200','broweyedif2[i]>15500','listlefte4[i]>460','listbroweye2[i]>120','listlefta1[i]<100',
-               'listrighte3[i]>270','listrighte3[i]<20','eyeopeningb[i]>23','eyeopening0[i]>2600','listslrightleft[i]>490',
-               'listslrightleft[i]<13','listmouthbrow[i]>550','moutheyes0[i]>1980','listlefta2[i]<-47','eyeopening3b[i]>18000',
-               'listlefta[i]<50','listlefte[i]<180','listlefta3[i]<120','listlefte3[i]<80','moutheyes[i]>70',
-               'eyestopleftmouth[i]>55','eyesbottomrightmouth[i]>100','eyeopening2[i]>420','newmet[i]>10','newmet2[i]<-30',
-               'newmet2[i]>20','lenratio[i]>150']
+                'moutheyes5[i]>4200','eyeopeninga[i]>2600','listline[i]>650','eyeopening3a[i]>15500','listlefte2[i]<-115',
+                'broweyedif[i]>3200','broweyedif2[i]>15500','listlefte4[i]>460','listbroweye2[i]>120','listlefta1[i]<100',
+                'listrighte3[i]>270','listrighte3[i]<20','eyeopeningb[i]>23','eyeopening0[i]>2600','listslrightleft[i]>490',
+                'listslrightleft[i]<13','listmouthbrow[i]>550','moutheyes0[i]>1980','listlefta2[i]<-47','eyeopening3b[i]>18000',
+                'listlefta[i]<50','listlefte[i]<180','listlefta3[i]<120','listlefte3[i]<80','moutheyes[i]>70',
+                'eyestopleftmouth[i]>55','eyesbottomrightmouth[i]>100','eyeopening2[i]>420','newmet[i]>10','newmet2[i]<-30',
+                'newmet2[i]>20','lenratio[i]>150']
 
 
 #These lists and numbers are useful when plotting points at the end
@@ -427,7 +435,7 @@ for p in range(pat,pat1):
                     a=landsnew #Just as a shortcut to be used below
                     for (x,y) in landsnew:
                       cv2.circle(resi, (x,y),3,(0,0,255),-1)
-                    cv2.imwrite(filename[:-8]+'norot'+lastones, resi)
+                    #cv2.imwrite(filename[:-8]+'norot'+lastones, resi)
                     # cv2.imshow("Cropped Image", cropped_img)
                     # cv2.waitKey(0)
             
@@ -464,7 +472,7 @@ for p in range(pat,pat1):
         
                     for (x,y) in newpoint:
                         cv2.circle(output, (x,y),1,(0,0,255),-1)
-                    cv2.imwrite(filename[:-8]+'last'+lastones, output)  #Save the rotated version of the image along with its landmarks
+                    #cv2.imwrite(filename[:-8]+'last'+lastones, output)  #Save the rotated version of the image along with its landmarks
         
                     ##The following are only for confirmation    
                     #     cv2.imshow("po",output)
@@ -3202,6 +3210,10 @@ for p in range(pat,pat1):
         if int(check_pat)==0 or p==pat1-1:
             print("For normal/pat the number of metric is")            
             print(l)
+            if int(manual_an)==1:
+                        print(metrnames[l]) 
+            else:
+                        print(metrnames2[l])
             
             print('\n')
             print('Below some numbers for normal/patients classification are presented:')
@@ -3258,6 +3270,10 @@ for p in range(pat,pat1):
         print('\n')
         print("For cen/per the number of metric is")            
         print(p)
+        if int(manual_an)==1:
+                    print(metrnamespat[p]) 
+        else:
+                    print(metrnamespat2[p])
         print('\n')
         print('Below some numbers for peripheral/central classification are presented')
         print("TP")
@@ -3315,6 +3331,8 @@ print(bestmetrics)
 print(initac)
 print(totaltrues)
 
+desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop') 
+os.chdir(desktop)
 
 if int(manual_an)==1: 
     nums=[i for i in range(1,len(metrnames)+1)]
@@ -3323,24 +3341,32 @@ else:
     nums=[i for i in range(1,len(metrnames2)+1)]
     length=len(metrnames2)
 
-if length==len(pointstoplot) and int(manual_an)==1 and int(check_pat)==0:  
+if length==len(pointstoplot) and int(manual_an)==1 and int(check_pat)==0: 
+    f = plt.figure()
     plt.yticks(np.arange(min(pointstoplot), 100, 5))
     plt.plot(nums,pointstoplot,'-o')
     plt.xlabel("Number of threshold values for norm/pat")
     plt.ylabel("Accuracy for manual annotation")
     plt.show()
+    f.savefig("normalpatman.pdf", bbox_inches='tight')
+    pickle.dump(f, open("normalpatman.pickle", "wb"))
+
     #Activate below only to get a graph of recall
     # plt.yticks(np.arange(min(senspoints), 1, 0.05))
     # plt.plot(nums,senspoints,'-o')
     # plt.xlabel("Number of threshold values for norm/pat")
     # plt.ylabel("Sensitivity/Recall for manual annotation")
     # plt.show()
-elif length==len(pointstoplot) and int(check_pat)==0:  
+elif length==len(pointstoplot) and int(check_pat)==0: 
+    f = plt.figure()
     plt.yticks(np.arange(min(pointstoplot), 100, 5))
     plt.plot(nums,pointstoplot,'-o')
     plt.xlabel("Number of threshold values for norm/pat")
     plt.ylabel("Accuracy for automatic annotation")
     plt.show()
+    f.savefig("normalpataut.pdf", bbox_inches='tight')
+    pickle.dump(f, open("normalpataut.pickle", "wb"))
+
     #Activate below only to get a graph of recall
     # plt.yticks(np.arange(min(senspoints), 1, 0.05))
     # plt.plot(nums,senspoints,'-o')
@@ -3357,11 +3383,15 @@ else:
     length2=len(metrnamespat2)
 # #plt.scatter(nums,pointstoplot)
 if length2==len(pointstoplotpat) and int(manual_an)==1 and int(check_pat)==1:
+    f = plt.figure()
     plt.yticks(np.arange(min(pointstoplotpat), 100, 5))
     plt.plot(nums2,pointstoplotpat,'-o')
     plt.xlabel("Number of threshold values for per/cen")
     plt.ylabel("Accuracy for manual annotation")
     plt.show()
+    f.savefig("periphcenman.pdf", bbox_inches='tight')
+    pickle.dump(f, open("periphcenman.pickle", "wb"))
+
     #Activate below only to get a graph of recall
     # plt.yticks(np.arange(min(senspointspat), 1, 0.05))
     # plt.plot(nums2,senspointspat,'-o')
@@ -3369,11 +3399,15 @@ if length2==len(pointstoplotpat) and int(manual_an)==1 and int(check_pat)==1:
     # plt.ylabel("Sensitivity/Recall for manual annotation")
     # plt.show()
 elif length2==len(pointstoplotpat) and int(check_pat)==1:
+    f = plt.figure()
     plt.yticks(np.arange(min(pointstoplotpat), 100, 5))
     plt.plot(nums2,pointstoplotpat,'-o')
     plt.xlabel("Number of threshold values for per/cen")
     plt.ylabel("Accuracy for automatic annotation")
     plt.show()
+    f.savefig("periphcenaut.pdf", bbox_inches='tight')
+    pickle.dump(f, open("periphcenaut.pickle", "wb"))
+
     #Activate below only to get a graph of recall
     # plt.yticks(np.arange(min(senspointspat), 1, 0.05))
     # plt.plot(nums2,senspointspat,'-o')
