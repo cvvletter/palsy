@@ -1,4 +1,4 @@
-For usage information of each file see its description included in the file. If we want to automatically classify images in a folder that contains images, we need to run ‘classification.py’ only. Files ‘palsyfinal.py’ along with ‘patients_landmarks.dat’, are also needed in order for the above to run. Instructions of how to create ‘patients_landmarks.dat’ are provided at the end. For more information see thesis "Facial Imaging and Diagnosis System for Neurological Disorders".
+For usage information of each file see its description included in the file. If we want to automatically classify images in a folder that contains images, we need to run ‘classification.py’ only. Files ‘palsyfinal.py’ along with ‘patients_landmarks.dat’, are also needed in order for the above to run. Instructions of how to create ‘patients_landmarks.dat’ are provided at the end. For more information see thesis "Facial Imaging and Diagnosis System for Neurological Disorders" http://resolver.tudelft.nl/uuid:e60a60fc-073c-48b4-83af-d5823f309539.
 
 ## palsyfinal.py
 
