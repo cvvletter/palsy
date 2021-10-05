@@ -182,11 +182,22 @@ for filename in os.listdir(newpath):
             cv2.imshow("Rotated Image With Landmarks", temp)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
+
+        # from here, a very rudimentary data cleanup is done to keep all landmarks between 0 and 900
+        for i in range(len(landmarks)):
+            if landmarks[i,0]<0:
+                landmarks[i,0]=0
+            elif landmarks[i,0]>900:
+                landmarks[i,0]=900
+            if landmarks[i,1]<0:
+                landmarks[i,1]=0
+            elif landmarks[i,1]>900:
+                landmarks[i,1]=900
         
         # add the transformed landmarks to the list of healthy landmarks
         features.append(landmarks)
         labels.append("healthy")
 
-features = np.reshape(features,(len(features),68*2))
+features = np.reshape(features,(len(features),len(landmarks)*2))
 np.savetxt('./machine_learning/features.txt', features, "%3d")
-np.savetxt('./machine_learning/labels.txt', labels, "%s" )
+np.savetxt('./machine_learning/labels.txt', labels, "%s")
