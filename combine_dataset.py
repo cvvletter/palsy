@@ -1,7 +1,7 @@
 """
 Created on Sep 20 2021
 
-@author: cvvletter
+author: cvvletter, adapted from classification.py, author:nsourlos
 """
 
 # Combine all annotated images into one dataset used for machine learning diagnosis
@@ -42,7 +42,7 @@ def rotate(origin, point, angle):
     return qx, qy
 
 # path to images
-path = "/home/cvvletter/Documents/palsy/palda_dataset"
+path = "./palda_dataset/"
 # toggle this to show (1) or don't show (0) images
 show_images = 0
 
@@ -54,7 +54,7 @@ labels = []
 
 # add the landmark data for all peripheral palsy patients to the dataset
 # counter = 0
-for file in glob.glob(path + "/peripheral/*.npy"):
+for file in glob.glob(path + "peripheral/*.npy"):
     if not file.endswith("_box.npy") and file.endswith(".npy"):
         landmarks = np.load(file)
         # counter += 1
@@ -63,14 +63,14 @@ for file in glob.glob(path + "/peripheral/*.npy"):
         labels.append("periphl") # add the correct label to a separate array
 
 # add the landmark data for all central palsy patients to the dataset
-for file in glob.glob(path + "/central/*.npy"):
+for file in glob.glob(path + "central/*.npy"):
     if not file.endswith("_box.npy") and file.endswith(".npy"):
         landmarks = np.load(file)
         features.append(landmarks)
         labels.append("central") # add the correct label to a separate array
 
 # add the landmark data for all healthy people to the dataset
-newpath = path + "/Healthy/"
+newpath = path + "Healthy/"
 for filename in os.listdir(newpath):
     # read file
     file = os.path.join(newpath,filename)
@@ -188,5 +188,5 @@ for filename in os.listdir(newpath):
         labels.append("healthy")
 
 features = np.reshape(features,(len(features),68*2))
-np.savetxt('features.txt', features, "%3d")
-np.savetxt('labels.txt', labels, "%s" )
+np.savetxt('./machine_learning/features.txt', features, "%3d")
+np.savetxt('./machine_learning/labels.txt', labels, "%s" )
