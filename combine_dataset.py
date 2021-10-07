@@ -54,8 +54,8 @@ def show_image(image, landmarks=None, title=""):
 # path to images
 path = "./palda_dataset/"
 # toggle this to show (True) or don't show (False)0 images
-show_images = True
-verbose = True
+show_images = False
+verbose = False
 
 # this list is used to hold all the landmarks
 features = []
@@ -101,6 +101,11 @@ for filename in os.listdir(newpath):
         facebox[3] = facebox[3] * (size_rescale[0]/size_initial[0])
         facebox = facebox.round(0)
         facebox = facebox.astype(int)
+        for i in range(len(facebox)):
+            if (facebox[i]<0):
+                facebox[i]=0
+            elif (facebox[i]>900):
+                facebox[i]=900
         image_cropped = image_resized[facebox[1]:facebox[3],facebox[0]:facebox[2]] #Crop image in x and y direction to include the face only  
         landmarks[:,0] -= facebox[0]
         landmarks[:,1] -= facebox[1]
@@ -160,7 +165,7 @@ for filename in os.listdir(newpath):
         
         # add the transformed landmarks to the list of healthy landmarks
         features.append(landmarks)
-        labels.append("periphl") # add the correct label to a separate array
+        labels.append(int(0)) # add the correct label to a separate array
 
 # add the landmark data for all central palsy patients to the dataset
 newpath = path + "central/"
@@ -200,6 +205,11 @@ for filename in os.listdir(newpath):
         facebox[3] = facebox[3] * (size_rescale[0]/size_initial[0])
         facebox = facebox.round(0)
         facebox = facebox.astype(int)
+        for i in range(len(facebox)):
+            if (facebox[i]<0):
+                facebox[i]=0
+            elif (facebox[i]>900):
+                facebox[i]=900
         image_cropped = image_resized[facebox[1]:facebox[3],facebox[0]:facebox[2]] #Crop image in x and y direction to include the face only  
         landmarks[:,0] -= facebox[0]
         landmarks[:,1] -= facebox[1]
@@ -258,7 +268,7 @@ for filename in os.listdir(newpath):
                 landmarks[i,1]=900
 
         features.append(landmarks)
-        labels.append("central") # add the correct label to a separate array
+        labels.append(int(1)) # add the correct label to a separate array
 
 # add the landmark data for all healthy people to the dataset
 newpath = path + "Healthy/"
@@ -343,8 +353,10 @@ for filename in os.listdir(newpath):
         
         # add the transformed landmarks to the list of healthy landmarks
         features.append(landmarks)
-        labels.append("healthy")
+        labels.append(int(2))
 
 features = np.reshape(features,(len(features),len(landmarks)*2))
 np.savetxt('./machine_learning/features.txt', features, "%3d")
-np.savetxt('./machine_learning/labels.txt', labels, "%s")
+np.savetxt('./machine_learning/labels.txt', labels, "%1d")
+np.save('./machine_learning/features.npy', features)
+np.save('./machine_learning/labels.npy', labels)
