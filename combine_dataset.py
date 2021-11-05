@@ -46,7 +46,7 @@ def show_image(image, landmarks=None, title=""):
     cv2.waitKey(0)
     if landmarks is not None:
         for (x,y) in landmarks:
-            cv2.circle(temp, (x,y),1,(0,0,255),-1)
+            cv2.circle(temp, (x,y),4,(0,0,255),-1)
         cv2.imshow(title+"Image With Landmarks", temp)
         cv2.waitKey(0)
     cv2.destroyAllWindows()
@@ -54,8 +54,8 @@ def show_image(image, landmarks=None, title=""):
 # path to images
 path = "./palda_dataset/"
 # toggle this to show (True) or don't show (False)0 images
-show_images = False
-verbose = False
+show_images = True
+verbose = True
 
 # this list is used to hold all the landmarks
 features = []
