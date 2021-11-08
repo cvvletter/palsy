@@ -24,18 +24,25 @@ healthy_subset, healthy_labels = features[142:202,:], labels[142:202]
 # print(central_subset.shape, central_labels.shape)
 # print(healthy_subset.shape, healthy_labels.shape)
 
-periphl_scale, central_scale, healthy_scale = 5, 2, 3
-for i in range (10,20+1):
-    features_test, labels_test = [], []
+periphl_scale = len(periphl_subset)/len(features)
+central_scale = len(central_subset)/len(features)
+healthy_scale = len(healthy_subset)/len(features)
+multiplier = 0.05*len(features)
+accuracy_array = []
+size_array = []
 
-    # append the random peripheral data points
-    features_test = features_test.append(random.sample(periphl_subset, int(periphl_scale*i)))
-    labels_test = labels_test.append(random.sample(periphl_labels, int(periphl_scale*i)))
-
-    # append the random central data points
-    features_test = features_test.append(random.sample(central_subset, int(central_scale*i)))
-    labels_test = labels_test.append(random.sample(central_labels, int(central_scale*i)))
-
-    # append the random healthy data points
-    features_test = features_test.append(random.sample(healthy_subset, int(healthy_scale*i)))
-    labels_test = labels_test.append(random.sample(healthy_labels, int(healthy_scale*i)))
+while len(features) > 20:
+    periphl_subset = random.sample(periphl_subset, len(periphl_subset) - int(round(periphl_scale*multiplier)))
+    central_subset = random.sample(central_subset, len(central_subset) - int(round(central_scale*multiplier)))
+    healthy_subset = random.sample(healthy_subset, len(healthy_subset) - int(round(healthy_scale*multiplier)))
+    features = []
+    features.append(periphl_subset)
+    features.append(central_subset)
+    features.append(healthy_subset)
+    
+    #bereken accuracy
+    
+    accuracy_array.append()
+    size_array.append(len(features))
+    
+plot(accuracy_array, size_array)
