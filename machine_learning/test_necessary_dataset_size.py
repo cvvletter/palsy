@@ -68,3 +68,48 @@ plt.plot(dataset_size, accuracy_svm)
 plt.ylabel('Testing accuracy')
 plt.xlabel('Dataset size')
 plt.show()
+
+
+
+import numpy as np
+
+# set the random seed so that results are reproducible
+np.random.seed(42)
+
+def dataset_load():
+    #load all features and labels of the dataset
+    features = np.load("C:/Users/hendr/Documents/TW studie jaar 3/palsy-master/machine_learning/features.npy", allow_pickle = True)
+    labels = np.load("C:/Users/hendr/Documents/TW studie jaar 3/palsy-master/machine_learning/labels.npy", allow_pickle = True)
+    
+    # remove the one broken data point
+    features, labels = np.delete(features, 102, 0), np.delete(labels, 102, 0)
+    return features, labels
+
+# load all features and labels of the dataset
+features, labels = dataset_load()
+
+# calculations for how many data points have to be removed each time.
+count_classes = np.bincount(labels)
+periphl_scale = count_classes[0]/len(features)
+central_scale = count_classes[1]/len(features)
+healthy_scale = count_classes[2]/len(features)
+multiplier = 0.05*len(features)
+end_size = 0.2*len(features)
+
+def dataset_cutter(features, labels):
+    # print("before",len(features))
+    count_classes = np.bincount(labels)
+    for i in range (int(round(periphl_scale*multiplier))): # remove some peripheral,
+        np.random.shuffle(features[0:count_classes[0]])
+        features = np.delete(features, 0, 0)
+        labels = np.delete(labels, 0, 0)
+    for i in range (int(round(central_scale*multiplier))): # some central,
+        np.random.shuffle(features[count_classes[0]:(count_classes[0] + count_classes[1])])
+        features = np.delete(features, 0+count_classes[0], 0)
+        labels = np.delete(labels, 0+count_classes[0], 0)
+    for i in range (int(round(healthy_scale*multiplier))): # and some healthy datapoints
+        np.random.shuffle(features[(count_classes[0] + count_classes[1]):((count_classes[0] + count_classes[1] + count_classes[2]))])
+        features = np.delete(features, 0+count_classes[0]+count_classes[1], 0)
+        labels = np.delete(labels, 0+count_classes[0]+count_classes[1], 0)
+    # print("after",len(features))
+    return features, labels
