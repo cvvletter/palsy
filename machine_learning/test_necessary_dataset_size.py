@@ -60,7 +60,7 @@ dataset_size = []
 
 # test accuracy and sensitivity untill the dataset is too small for functional testing
 while len(features) > end_size:
-    print("Remaining number of each class [peripheral central healthy] in the training dataset:",np.bincount(labels))
+    # print("Remaining number of each class [peripheral central healthy] in the training dataset:",np.bincount(labels))
 
     # calculate LOOCV accuracy for svm
     correct = 0
@@ -87,7 +87,7 @@ while len(features) > end_size:
 
     accuracy = n1/(n1+n2)*accuracy1 + n2/(n1+n2)*accuracy2
 
-    print("accuracy1 =", accuracy1, "accuracy2=", accuracy2)
+    # print("accuracy1 =", accuracy1, "accuracy2=", accuracy2)
 
     # store accuracy...
     accuracy_svm.append(accuracy)
@@ -99,34 +99,13 @@ while len(features) > end_size:
         discarded_features = discarded_features.tolist()
     features, labels, discarded_features, discarded_labels = dataset_cutter(features, labels, discarded_features, discarded_labels)
 
+# calculate the polynomial of best fit of degree deg
 m, b = np.polyfit(dataset_size, accuracy_svm, deg=1)
 
-print(type(m),type(b),type(dataset_size[0]),type(dataset_size),type(accuracy_svm[0]),type(accuracy_svm))
-
-# plot accuracy to dataset size
-plt.plot(dataset_size, accuracy_svm)
+# plot accuracy to dataset size and also the line of best fit
+plt.plot(dataset_size, accuracy_svm, ls='solid', c='b')
 dataset_size = np.asarray(dataset_size)
-plt.plot(dataset_size, m*dataset_size+b)
-plt.ylabel('Testing accuracy')
+plt.plot(dataset_size, m*dataset_size+b, ls='dashed', c='c')
+plt.ylabel('Model accuracy')
 plt.xlabel('Dataset size')
 plt.show()
-
-# def dataset_load():
-#     #load all features and labels of the dataset
-#     features = np.load("C:/Users/hendr/Documents/TW studie jaar 3/palsy-master/machine_learning/features.npy", allow_pickle = True)
-#     labels = np.load("C:/Users/hendr/Documents/TW studie jaar 3/palsy-master/machine_learning/labels.npy", allow_pickle = True)
-    
-#     # remove the one broken data point
-#     features, labels = np.delete(features, 102, 0), np.delete(labels, 102, 0)
-#     return features, labels
-
-# # load all features and labels of the dataset
-# features, labels = dataset_load()
-
-# calculations for how many data points have to be removed each time.
-count_classes = np.bincount(labels)
-periphl_scale = count_classes[0]/len(features)
-central_scale = count_classes[1]/len(features)
-healthy_scale = count_classes[2]/len(features)
-multiplier = 0.05*len(features)
-end_size = 0.2*len(features)
