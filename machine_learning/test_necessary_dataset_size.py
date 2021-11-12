@@ -7,7 +7,9 @@ from sklearn.linear_model import LinearRegression
 np.random.seed(42)
 
 # load all features and labels of the dataset
-features, labels = np.load('./machine_learning/features.npy'), np.load('./machine_learning/labels.npy')
+features = np.load("C:/Users/hendr/Documents/TW studie jaar 3/palsy-master/machine_learning/features.npy")
+labels = np.load("C:/Users/hendr/Documents/TW studie jaar 3/palsy-master/machine_learning/labels.npy")
+#features, labels = np.load('./machine_learning/features.npy'), np.load('./machine_learning/labels.npy')
 
 # remove the one broken data point
 features, labels = np.delete(features, 102, 0), np.delete(labels, 102, 0)
@@ -22,34 +24,44 @@ central_scale = count_classes[1]/len(features)
 healthy_scale = count_classes[2]/len(features)
 multiplier = 0.05*len(features)
 end_size = 0.2*len(features)
+ten_check = [0,0,0]
 
 # this funcion removes some entries for each class from the dataset, and adds these to a different array
-def dataset_cutter(features, labels, discarded_features, discarded_labels):
+def dataset_cutter(features, labels, discarded_features, discarded_labels, ten_check):
     count_classes = np.bincount(labels)
-    for i in range (int(round(periphl_scale*multiplier))): # remove some peripheral,
-        np.random.shuffle(features[0:count_classes[0]])
-        index = 0
-        discarded_features.append(features[index])
-        discarded_labels.append(labels[index])
-        features = np.delete(features, index, 0)
-        labels = np.delete(labels, index, 0)
-    for i in range (int(round(central_scale*multiplier))): # some central,
-        np.random.shuffle(features[count_classes[0]:(count_classes[0] + count_classes[1])])
-        index = 0+count_classes[0]
-        discarded_features.append(features[index])
-        discarded_labels.append(labels[index])
-        features = np.delete(features, index, 0)
-        labels = np.delete(labels, index, 0)
-    for i in range (int(round(healthy_scale*multiplier))): # and some healthy datapoints
-        np.random.shuffle(features[(count_classes[0] + count_classes[1]):((count_classes[0] + count_classes[1] + count_classes[2]))])
-        index = 0+count_classes[0]+count_classes[1]
-        discarded_features.append(features[index])
-        discarded_labels.append(labels[index])
-        features = np.delete(features, index, 0)
-        labels = np.delete(labels, index, 0)
+    if sum(ten_check) == 0:
+        ten_check = [5,2,3]
+    if not ten_check[0] == 0:
+        for i in range (int(round(periphl_scale**0))): # remove some peripheral,
+            np.random.shuffle(features[0:count_classes[0]])
+            index = 0
+            discarded_features.append(features[index])
+            discarded_labels.append(labels[index])
+            features = np.delete(features, index, 0)
+            labels = np.delete(labels, index, 0)
+            ten_check[0] = ten_check[0] - 1
+    elif not ten_check[1] == 0:
+        for i in range (int(round(central_scale**0))): # some central,
+            np.random.shuffle(features[count_classes[0]:(count_classes[0] + count_classes[1])])
+            index = 0+count_classes[0]
+            discarded_features.append(features[index])
+            discarded_labels.append(labels[index])
+            features = np.delete(features, index, 0)
+            labels = np.delete(labels, index, 0)
+            ten_check[1] = ten_check[1] - 1
+    else:
+        for i in range (int(round(healthy_scale**0))): # and some healthy datapoints
+            np.random.shuffle(features[(count_classes[0] + count_classes[1]):((count_classes[0] + count_classes[1] + count_classes[2]))])
+            index = 0+count_classes[0]+count_classes[1]
+            discarded_features.append(features[index])
+            discarded_labels.append(labels[index])
+            features = np.delete(features, index, 0)
+            labels = np.delete(labels, index, 0)
+            ten_check[2] = ten_check[2] - 1
+    print(ten_check)
     # discarded_features = np.reshape(discarded_features, (len(discarded_features),-1))
     # discarded_labels = np.reshape(discarded_labels, (len(discarded_labels)))
-    return features, labels, discarded_features, discarded_labels
+    return features, labels, discarded_features, discarded_labels, ten_check
 
 # define emtpy lists for final plotting
 accuracy_svm = []
@@ -60,7 +72,7 @@ dataset_size = []
 
 # test accuracy and sensitivity untill the dataset is too small for functional testing
 while len(features) > end_size:
-    # print("Remaining number of each class [peripheral central healthy] in the training dataset:",np.bincount(labels))
+    print("Remaining number of each class [peripheral central healthy] in the training dataset:",np.bincount(labels))
 
     # calculate LOOCV accuracy for svm
     correct = 0
@@ -87,7 +99,7 @@ while len(features) > end_size:
 
     accuracy = n1/(n1+n2)*accuracy1 + n2/(n1+n2)*accuracy2
 
-    # print("accuracy1 =", accuracy1, "accuracy2=", accuracy2)
+    print("accuracy1 =", accuracy1, "accuracy2=", accuracy2)
 
     # store accuracy...
     accuracy_svm.append(accuracy)
@@ -97,15 +109,41 @@ while len(features) > end_size:
 
     if type(discarded_features) is not list:
         discarded_features = discarded_features.tolist()
-    features, labels, discarded_features, discarded_labels = dataset_cutter(features, labels, discarded_features, discarded_labels)
+    features, labels, discarded_features, discarded_labels, ten_check = dataset_cutter(features, labels, discarded_features, discarded_labels, ten_check)
 
-# calculate the polynomial of best fit of degree deg
+#Makes a linear regression model to predict the needed dataset_size 
+#reg = LinearRegression().fit(#training dataset_size, #training svm_accuracy)
+#print("model accuracy = ", reg.score(#testing dataset_size, #testing svm_accuracy))
+
+#fits a linear regression line on accuracy_svm ~ dataset_size 
 m, b = np.polyfit(dataset_size, accuracy_svm, deg=1)
 
-# plot accuracy to dataset size and also the line of best fit
-plt.plot(dataset_size, accuracy_svm, ls='solid', c='b')
+print(type(m),type(b),type(dataset_size[0]),type(dataset_size),type(accuracy_svm[0]),type(accuracy_svm))
+
+# plot accuracy to dataset size
+plt.plot(dataset_size, accuracy_svm)
 dataset_size = np.asarray(dataset_size)
-plt.plot(dataset_size, m*dataset_size+b, ls='dashed', c='c')
-plt.ylabel('Model accuracy')
+plt.plot(dataset_size, m*dataset_size+b)
+plt.ylabel('Testing accuracy')
 plt.xlabel('Dataset size')
 plt.show()
+
+# def dataset_load():
+#     #load all features and labels of the dataset
+#     features = np.load("C:/Users/hendr/Documents/TW studie jaar 3/palsy-master/machine_learning/features.npy", allow_pickle = True)
+#     labels = np.load("C:/Users/hendr/Documents/TW studie jaar 3/palsy-master/machine_learning/labels.npy", allow_pickle = True)
+    
+#     # remove the one broken data point
+#     features, labels = np.delete(features, 102, 0), np.delete(labels, 102, 0)
+#     return features, labels
+
+# # load all features and labels of the dataset
+# features, labels = dataset_load()
+
+# calculations for how many data points have to be removed each time.
+count_classes = np.bincount(labels)
+periphl_scale = count_classes[0]/len(features)
+central_scale = count_classes[1]/len(features)
+healthy_scale = count_classes[2]/len(features)
+multiplier = 0.05*len(features)
+end_size = 0.2*len(features)
